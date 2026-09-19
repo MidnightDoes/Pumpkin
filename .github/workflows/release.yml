@@ -60,6 +60,10 @@ jobs:
             rustup target add "$TARGET"
             cargo build --verbose --release --target "$TARGET"
           fi
+          if [ "${{ runner.os }}" == "macOS" ] && [ "${{ runner.arch }}" == "ARM64" ]; then
+            rustup target add x86_64-apple-darwin
+            cargo build --verbose --release --target x86_64-apple-darwin
+          fi
 
       - name: Prepare artifacts
         shell: bash
@@ -75,6 +79,9 @@ jobs:
               TARGET="aarch64-unknown-linux-musl"
             fi
             cp "target/$TARGET/release/pumpkin" "dist/pumpkin-${{ runner.arch }}-${{ runner.os }}-musl"
+          fi
+          if [ "${{ runner.os }}" == "macOS" ] && [ "${{ runner.arch }}" == "ARM64" ]; then
+            cp "target/x86_64-apple-darwin/release/pumpkin" "dist/pumpkin-X64-macOS"
           fi
 
       - name: Upload unsigned executable for SignPath (Windows only)
